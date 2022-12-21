@@ -1,15 +1,12 @@
-# include subfolders
-# confirm Button
-
-# list all the photos
-# compare all the entre ellas a ver si son iguales
-# si son iguales confirm button para eliminar
-
-# imports
 import cv2
-import matplotlib.pyplot as plt
 import numpy as np
 import os
+
+
+class Preferences:
+    def __init__(self, subFolders, confirmation) -> None:
+        self.subFolders = subFolders
+        self.confirmation = confirmation
 
 
 def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
@@ -28,30 +25,30 @@ def ResizeWithAspectRatio(image, width=None, height=None, inter=cv2.INTER_AREA):
     return cv2.resize(image, dim, interpolation=inter)
 
 
-class Preferences:
-    def __init__(self, subFolders, confirmation) -> None:
-        self.subFolders = subFolders
-        self.confirmation = confirmation
+def GetPreferences():
+    subFolders = "x"
+    confirmation = "x"
+
+    while subFolders != "y" and subFolders != "n":
+        subFolders = input(
+            "Do you want to analice the subfolders of this directoty too? (y/n)"
+        )
+    while confirmation != "y" and confirmation != "n":
+        confirmation = input(
+            "Do you want to see a confirmation button before deleting an image? (y/n)"
+        )
+
+    return Preferences(subFolders, confirmation)
 
 
 print("\nWelcome to RepDel, a tool for removing duplicates images\n")
 
-subFolders = "x"
-confirmation = "x"
-
-while subFolders != "y" and subFolders != "n":
-    subFolders = input(
-        "Do you want to analice the subfolders of this directoty too? (y/n)"
-    )
-while confirmation != "y" and confirmation != "n":
-    confirmation = input(
-        "Do you want to see a confirmation button before deleting an image? (y/n)"
-    )
-
-userPreferences = Preferences(subFolders, confirmation)
+userPreferences = GetPreferences()
 imagesRoutes = ()
 routesAux = []
 
+# Routes setup
+# Get all the files routes in the subfolders
 if userPreferences.subFolders == "y":
     for (path, dir_names, files_names) in os.walk(
         os.path.dirname(os.path.realpath(__file__))
@@ -59,6 +56,7 @@ if userPreferences.subFolders == "y":
         for fileName in files_names:
             routesAux.append(path + "\\" + fileName)
 
+# Get all the files routes in this folder
 else:
     for fileName in os.listdir():
         routesAux.append(os.path.dirname(
@@ -85,8 +83,8 @@ for i in range(0, len(routes)):
                 else:
                     if img2 is not None:
 
+                        # They could be duplicates
                         if img1.shape == img2.shape:
-                            # They could be duplicates
                             diff = cv2.subtract(img1, img2)
                             (
                                 b,
