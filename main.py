@@ -127,5 +127,9 @@ for i in range(0, len(routes)):
                                     elif key == 51:
                                         # number 3 on windows
                                         continue
+                                    else:
+                                        cv2.destroyAllWindows()
+                                        cv2.imshow('comparation', vis)
+
 
                                 cv2.destroyAllWindows()
